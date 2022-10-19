@@ -11,6 +11,8 @@ import psycopg2 as db
 from dotenv import load_dotenv
 import os
 import folium
+import webbrowser
+
 
 load_dotenv()
 
@@ -184,30 +186,29 @@ def map_record():
     result=conn.fetchall()[0][0]
     dbConnection.commit()
 
-    print(result)
     xy = result.split(' ')
     long = xy[0].split("POINT(")[1]
     lat = xy[1].split(")")[0]
-    print(long, lat)
-    return
 
     # transform to GEO Json and upload to github
-    url = (
-    "https://raw.githubusercontent.com/sarajoha/lotr_tkinter/main/data"
-    )
-    layer = f"{url}/{table.get()}.json"
+    url = os.getenv("DATA_URL")
+    layer = f"{url}/{table.get().title()}.geojson"
 
-    centroid = [long, lat]
+    centroid = [lat, long]
     m = folium.Map(
         location=centroid,
         tiles="cartodbpositron",
-        zoom_start=2,
+        zoom_start=8,
     )
 
     folium.GeoJson(layer, name="geojson").add_to(m)
 
     folium.LayerControl().add_to(m)
-    m
+    map_path = f"./maps/{table.get()}_map.html"
+    m.save(map_path)
+    root_path = os.getenv("ROOT_PATH")
+    full_path = os.path.join(root_path, map_path[2:])
+    webbrowser.open_new_tab(full_path)
 
 
 #######
