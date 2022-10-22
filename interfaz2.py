@@ -2,21 +2,21 @@
 Interface to query a table of forests from the Lord Of The Rings
 Using the data from gvSIG https://scholarworks.wm.edu/asoer/3/
 Color palette: https://coolors.co/palette/606c38-283618-fefae0-dda15e-bc6c25
-# webbroser y folium
 """
-from tkinter import *
-import tkinter as tk
-from tkinter import messagebox
-import psycopg2 as db
-from dotenv import load_dotenv
 import os
 import folium
 import webbrowser
 
+from tkinter import *
+import tkinter as tk
+from tkinter import messagebox
+
+from dotenv import load_dotenv
+import psycopg2 as db
+
 
 load_dotenv()
 
-# TODO: organize code and separate buttons
 
 host = os.getenv("HOST")
 dbname = os.getenv("DBNAME")
@@ -68,7 +68,6 @@ def queryTable():
     if not result:
         label=Label(resultsFrame, text="Intenta con un numero menor")
         label.pack()
-    # si no hay resultados mensaje
 
     for record in result:
         rlabel=Label(resultsFrame, text="GID", bg=palette["lightBrown"]).grid(row=11, column=1, sticky=E)
@@ -290,45 +289,43 @@ recordId.pack(pady=10, padx=10)
 idLabel = Label(inputFrame, text=f"Ingresa un número... si te atreves", bg=palette["green"], fg="white")
 idLabel.pack(pady=5, padx=10) 
 
-# add frame to query the db with the id
-actionFrame = Frame(window, width=400, height=100, bg=palette["green"])
-actionFrame.pack(pady=20)
+# Frame for queries to specific records
+specificFrame = Frame(window, width=100, height=300, bg=palette["green"])
+specificFrame.pack(pady=20)
+
+# Frame for queries to whole layer
+generalFrame = Frame(window, width=100, height=300, bg=palette["green"])
+generalFrame.pack(pady=20)
 
 # add results frame
 resultsFrame = Frame(window, width=400, height=100, bg=palette["lightBrown"])
 resultsFrame.pack(pady=30)
 
-# add action buttons
-bt = Button(actionFrame, text="Consultar", command=queryTable)
+# Actions for a specific object
+bt = Button(specificFrame, text="Consultar", command=queryTable)
 bt.grid(pady=5, padx=5, row=5, column=0)
 
-bt = Button(actionFrame, text="Limpiar", command=clean)
-bt.grid(pady=5, padx=5, row=5, column=1)
-
-bt = Button(actionFrame, text="Cerrar", command=close)
-bt.grid(pady=5, padx=5, row=5, column=2)
-
-# how many are there
-bt = Button(actionFrame, text="Cuantos hay?", command=count)
-bt.grid(pady=5, padx=5, row=5, column=3)
 
 # how big is x?
-bt = Button(actionFrame, text="Area", command=calculate_area)
+bt = Button(specificFrame, text="Area", command=calculate_area)
 bt.grid(pady=5, padx=5, row=5, column=4)
 
-# what x is the biggest?
-bt = Button(actionFrame, text="Region mas grande?", command=largest_area)
-bt.grid(pady=5, padx=5, row=5, column=5)
-
-# # was frodo here?
-bt = Button(actionFrame, text="Was Frodo here?", command=was_frodo_here)
+# was frodo here?
+bt = Button(specificFrame, text="Was Frodo here?", command=was_frodo_here)
 bt.grid(pady=5, padx=5, row=5, column=6)
 
-# # see in a map
-bt = Button(actionFrame, text="See in a map", command=map_record)
+# see in a map
+bt = Button(specificFrame, text="See in a map", command=map_record)
 bt.grid(pady=5, padx=5, row=5, column=7)
 
+# Actions for the whole layer
+# what x is the biggest?
+bt = Button(generalFrame, text="Region mas grande?", command=largest_area)
+bt.grid(pady=5, padx=5, row=5, column=5)
 
+# how many are there?
+bt = Button(generalFrame, text="Cuantos hay?", command=count)
+bt.grid(pady=5, padx=5, row=5, column=3)
 
 # Shows window
 window.mainloop()
